@@ -11,7 +11,7 @@ pub mod comedic_concurrency {
     use std::thread;
 
     pub fn concurrent_laughter(joke: &str, num_threads: u32) {
-        let shared_joke = Arc::new(Mutex::new(joke));
+        let shared_joke = Arc::new(Mutex::new(joke.to_owned()));
 
         let mut handles = vec![];
 
@@ -32,9 +32,12 @@ pub mod comedic_concurrency {
 
 pub mod punchline_pointers {
     pub fn deliver_punchline(joke: &str, punchline: &str) {
-        let punchline_ptr = punchline as *const str;
+        let punchline_ptr = punchline.as_ptr();
+        let len = punchline.len();
         unsafe {
-            println!("Joke: {}\nPunchline: {}", joke, *punchline_ptr);
+            let raw_punchline = std::slice::from_raw_parts(punchline_ptr, len);
+            let punchline_str = std::str::from_utf8_unchecked(raw_punchline);
+            println!("Joke: {}\nPunchline: {}", joke, punchline_str);
         }
     }
 }
